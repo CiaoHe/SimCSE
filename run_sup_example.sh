@@ -12,11 +12,13 @@ PORT_ID=$(expr $RANDOM + 1000)
 # Allow multiple threads
 export OMP_NUM_THREADS=8
 
+export HF_HOME=/cto_labs/AIDD/cache
+
 # Use distributed data parallel
 # If you only want to use one card, uncomment the following line and comment the line with "torch.distributed.launch"
-# python train.py \
-python -m torch.distributed.launch --nproc_per_node $NUM_GPU --master_port $PORT_ID train.py \
-    --model_name_or_path bert-base-uncased \
+# python train.py
+torchrun --nproc_per_node=$NUM_GPU --nnodes=1 --master_port=$PORT_ID train.py \
+    --model_name_or_path /cto_labs/AIDD/WEIGHTS/huggingface/bert-base-uncased \
     --train_file data/nli_for_simcse.csv \
     --output_dir result/my-sup-simcse-bert-base-uncased \
     --num_train_epochs 3 \
@@ -33,4 +35,5 @@ python -m torch.distributed.launch --nproc_per_node $NUM_GPU --master_port $PORT
     --do_train \
     --do_eval \
     --fp16 \
+    --report_to none \
     "$@"
