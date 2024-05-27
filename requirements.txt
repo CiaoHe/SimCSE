@@ -1,4 +1,4 @@
-transformers==4.2.1
+transformers # == 4.39.1 works well
 scipy
 datasets
 pandas
